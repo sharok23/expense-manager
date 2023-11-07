@@ -3,12 +3,11 @@ package com.edstem.expensemanager.service;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.AllTransactionResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
-import com.edstem.expensemanager.model.Categories;
+import com.edstem.expensemanager.model.Category;
 import com.edstem.expensemanager.model.Transaction;
-import com.edstem.expensemanager.repository.CategoriesRepository;
+import com.edstem.expensemanager.repository.CategoryRepository;
 import com.edstem.expensemanager.repository.TransactionRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -19,26 +18,25 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
-    private final CategoriesRepository categoriesRepository;
+    private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
     public TransactionResponse createTransaction(TransactionRequest request) {
-        Categories categories =
-                (Categories)
-                        categoriesRepository
+        Category category =
+                (Category)
+                        categoryRepository
                                 .findByType(request.getType())
                                 .orElseThrow(
                                         () ->
                                                 new RuntimeException(
-                                                        "Categories not found for type "
+                                                        "Category not found for type "
                                                                 + request.getType()));
         Transaction transaction =
                 Transaction.builder()
                         .name(request.getName())
                         .type(request.getType())
                         .amount(request.getAmount())
-                        .date(LocalDate.now())
-                        .categories(categories)
+                        .category(category)
                         .build();
         Transaction savedTransaction = transactionRepository.save(transaction);
         return modelMapper.map(savedTransaction, TransactionResponse.class);
@@ -70,8 +68,8 @@ public class TransactionService {
                         transaction -> {
                             AllTransactionResponse response =
                                     modelMapper.map(transaction, AllTransactionResponse.class);
-                            if (transaction.getCategories() != null) {
-                                response.setColor(transaction.getCategories().getColor());
+                            if (transaction.getCategory() != null) {
+                                response.setColor(transaction.getCategory().getColor());
                             }
                             return response;
                         })

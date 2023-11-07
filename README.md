@@ -1,13 +1,13 @@
 # Expense Manager
-This project provides a RESTful API for an Expense Manager application. This repository contains a Spring Boot application that manages transactions and categories. The application includes two main controllers: CategoriesController and TransactionController, which handle HTTP requests for creating, retrieving, and deleting transactions and categories. The TransactionController also supports retrieving transactions with associated category colors. The application’s logic is encapsulated in two service classes: CategoriesService and TransactionService. These services interact with the CategoriesRepository and TransactionRepository to persist and retrieve data from the database. Unit tests for these controllers and services are included to ensure the functionality and reliability of the application.
+This project provides a RESTful API for an Expense Manager application. This repository contains a Spring Boot application that manages transactions and category. The application includes two main controllers: CategoriesController and TransactionController, which handle HTTP requests for creating, retrieving, and deleting transactions and category. The TransactionController also supports retrieving transactions with associated category colors. The application’s logic is encapsulated in two service classes: CategoriesService and TransactionService. These services interact with the CategoriesRepository and TransactionRepository to persist and retrieve data from the database. Unit tests for these controllers and services are included to ensure the functionality and reliability of the application.
 
 # CategoriesController
 
-Base URL: /v1/categories
+Base URL: /v1/category
 
 POST / : Create a new category. It takes a CategoriesRequest as input and returns a CategoriesResponse.
 
-GET / : Get a list of all categories. It returns a list of CategoriesResponse.
+GET / : Get a list of all category. It returns a list of CategoriesResponse.
 
 # TransactionController
 

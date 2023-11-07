@@ -8,9 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.edstem.expensemanager.contract.Request.CategoriesRequest;
-import com.edstem.expensemanager.contract.Response.CategoriesResponse;
-import com.edstem.expensemanager.service.CategoriesService;
+import com.edstem.expensemanager.contract.Request.CategoryRequest;
+import com.edstem.expensemanager.contract.Response.CategoryResponse;
+import com.edstem.expensemanager.service.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,22 +24,22 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CategoriesControllerTest {
+public class CategoryControllerTest {
 
     @Autowired private MockMvc mockMvc;
 
-    @MockBean private CategoriesService categoriesService;
+    @MockBean private CategoryService categoryService;
 
     @Test
     void testCreateCategories() throws Exception {
-        CategoriesRequest request = new CategoriesRequest();
-        CategoriesResponse expectedResponse = new CategoriesResponse();
+        CategoryRequest request = new CategoryRequest();
+        CategoryResponse expectedResponse = new CategoryResponse();
 
-        when(categoriesService.createCategories(any(CategoriesRequest.class)))
+        when(categoryService.createCategories(any(CategoryRequest.class)))
                 .thenReturn(expectedResponse);
 
         mockMvc.perform(
-                        post("/v1/categories")
+                        post("/v1/category")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(new ObjectMapper().writeValueAsString(request)))
                 .andDo(print())
@@ -49,11 +49,11 @@ public class CategoriesControllerTest {
 
     @Test
     void testGetCategories() throws Exception {
-        List<CategoriesResponse> expectedResponse = new ArrayList<>();
+        List<CategoryResponse> expectedResponse = new ArrayList<>();
 
-        when(categoriesService.getCategories()).thenReturn(expectedResponse);
+        when(categoryService.getCategories()).thenReturn(expectedResponse);
 
-        mockMvc.perform(get("/v1/categories").contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/v1/category").contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(expectedResponse)));

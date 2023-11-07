@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c6fe438c-a55e-4bc3-906a-9d27998aa398",
+		"_postman_id": "fe405ba8-7063-4f90-ac80-a1b4977324f4",
 		"name": "Expense Manager",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "28741936"
@@ -13,14 +13,14 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"type\":\"EXPENSE\",\r\n    \"color\":\"RED\"\r\n}",
+					"raw": "{\r\n    \"type\":\"Expense\",\r\n    \"color\":\"#C43095\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://localhost:8080/v1/categories"
+				"url": "http://localhost:8080/v1/category"
 			},
 			"response": []
 		},
@@ -29,7 +29,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:8080/v1/categories"
+				"url": "http://localhost:8080/v1/category"
 			},
 			"response": []
 		},
@@ -40,7 +40,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Salary\",\r\n    \"type\": \"SAVINGS\",\r\n    \"amount\": 1000,\r\n    \"date\": \"2023-12-11\"\r\n}",
+					"raw": "{\r\n    \"name\": \"Salary\",\r\n    \"type\": \"Savings\",\r\n    \"amount\": 500\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -48,15 +48,6 @@
 					}
 				},
 				"url": "http://localhost:8080/v1/transaction"
-			},
-			"response": []
-		},
-		{
-			"name": "deleteTransactionById",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": "http://localhost:8080/v1/transaction/3"
 			},
 			"response": []
 		},
@@ -75,6 +66,15 @@
 				"method": "GET",
 				"header": [],
 				"url": "http://localhost:8080/v1/transaction/labels"
+			},
+			"response": []
+		},
+		{
+			"name": "deleteTransactionById",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:8080/v1/transaction/3"
 			},
 			"response": []
 		}
