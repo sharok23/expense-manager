@@ -8,9 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -28,5 +29,6 @@ public class Transaction {
     private Double amount;
     private LocalDate date;
 
-    @ManyToOne private Categories categories;
+    @ManyToOne
+    private Categories categories;
 }

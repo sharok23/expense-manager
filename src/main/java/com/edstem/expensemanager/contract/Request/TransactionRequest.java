@@ -1,10 +1,10 @@
 package com.edstem.expensemanager.contract.Request;
 
-import com.edstem.expensemanager.constant.Type;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+        import com.edstem.expensemanager.constant.Type;
+        import jakarta.validation.constraints.NotBlank;
+        import lombok.Getter;
+        import lombok.NoArgsConstructor;
+        import lombok.Setter;
 
 @Getter
 @Setter
