@@ -5,8 +5,6 @@ This project provides a RESTful API for an Expense Manager application. This rep
 
 Base URL: /v1/category
 
-POST / : Create a new category. It takes a CategoryRequest as input and returns a CategoryResponse.
-
 GET / : Get a list of all category. It returns a list of CategoryResponse.
 
 # TransactionController
@@ -15,8 +13,6 @@ Base URL: /v1/transaction
 
 POST / : Create a new transaction. It takes a TransactionRequest as input and returns a TransactionResponse.
 
-GET / : Get a list of all transactions. It returns a list of TransactionResponse.
-
 DELETE /{id} : Delete a transaction by its ID. It takes an ID as a path variable and returns a string message.
 
-GET /labels : Get a list of all transactions with color. It returns a list of AllTransactionResponse.
+GET /labels : Get a list of all transactions with color.
