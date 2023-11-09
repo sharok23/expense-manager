@@ -1,7 +1,6 @@
 package com.edstem.expensemanager.controller;
 
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
-import com.edstem.expensemanager.contract.Response.AllTransactionResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
 import java.util.List;
@@ -27,18 +26,13 @@ public class TransactionController {
         return transactionService.createTransaction(transaction);
     }
 
-    @GetMapping
-    public List<TransactionResponse> getTransactions() {
-        return transactionService.getTransactions();
-    }
-
     @DeleteMapping("/{id}")
     public String deleteTransactionById(@PathVariable Long id) {
         return transactionService.deleteTransactionById(id);
     }
 
     @GetMapping("/labels")
-    public List<AllTransactionResponse> getTransactionsWithColor() {
+    public List<TransactionResponse> getTransactionsWithColor() {
         return transactionService.getTransactionsWithColor();
     }
 }

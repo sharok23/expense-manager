@@ -1,7 +1,6 @@
 package com.edstem.expensemanager.service;
 
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
-import com.edstem.expensemanager.contract.Response.AllTransactionResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.model.Category;
 import com.edstem.expensemanager.model.Transaction;
@@ -23,14 +22,13 @@ public class TransactionService {
 
     public TransactionResponse createTransaction(TransactionRequest request) {
         Category category =
-                (Category)
-                        categoryRepository
-                                .findByType(request.getType())
-                                .orElseThrow(
-                                        () ->
-                                                new RuntimeException(
-                                                        "Category not found for type "
-                                                                + request.getType()));
+                categoryRepository
+                        .findByType(request.getType())
+                        .orElseThrow(
+                                () ->
+                                        new RuntimeException(
+                                                "Category not found for type "
+                                                        + request.getType()));
         Transaction transaction =
                 Transaction.builder()
                         .name(request.getName())
@@ -38,15 +36,18 @@ public class TransactionService {
                         .amount(request.getAmount())
                         .category(category)
                         .build();
-        Transaction savedTransaction = transactionRepository.save(transaction);
-        return modelMapper.map(savedTransaction, TransactionResponse.class);
-    }
+        transaction = transactionRepository.save(transaction);
 
-    public List<TransactionResponse> getTransactions() {
-        List<Transaction> transactions = transactionRepository.findAll();
-        return transactions.stream()
-                .map(transaction -> modelMapper.map(transaction, TransactionResponse.class))
-                .collect(Collectors.toList());
+        TransactionResponse response =
+                TransactionResponse.builder()
+                        .id(transaction.getId())
+                        .name(transaction.getName())
+                        .type(transaction.getType())
+                        .amount(transaction.getAmount())
+                        .color(transaction.getCategory().getColor())
+                        .build();
+
+        return response;
     }
 
     public String deleteTransactionById(Long id) {
@@ -61,13 +62,13 @@ public class TransactionService {
         return "Transaction " + transaction.getName() + " has been deleted";
     }
 
-    public List<AllTransactionResponse> getTransactionsWithColor() {
+    public List<TransactionResponse> getTransactionsWithColor() {
         List<Transaction> transactions = transactionRepository.findAll();
         return transactions.stream()
                 .map(
                         transaction -> {
-                            AllTransactionResponse response =
-                                    modelMapper.map(transaction, AllTransactionResponse.class);
+                            TransactionResponse response =
+                                    modelMapper.map(transaction, TransactionResponse.class);
                             if (transaction.getCategory() != null) {
                                 response.setColor(transaction.getCategory().getColor());
                             }

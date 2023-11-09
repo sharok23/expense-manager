@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
-import com.edstem.expensemanager.contract.Response.AllTransactionResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,18 +49,6 @@ public class TransactionControllerTest {
     }
 
     @Test
-    void testGetTransactions() throws Exception {
-        List<TransactionResponse> expectedResponse = new ArrayList<>();
-
-        when(transactionService.getTransactions()).thenReturn(expectedResponse);
-
-        mockMvc.perform(get("/v1/transaction").contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(expectedResponse)));
-    }
-
-    @Test
     void testDeleteTransactionById() throws Exception {
         Long id = 1L;
         String expectedResponse = "Transaction Home rent deleted successfully";
@@ -77,7 +64,7 @@ public class TransactionControllerTest {
 
     @Test
     void testGetTransactionsWithColor() throws Exception {
-        List<AllTransactionResponse> expectedResponse = new ArrayList<>();
+        List<TransactionResponse> expectedResponse = new ArrayList<>();
 
         when(transactionService.getTransactionsWithColor()).thenReturn(expectedResponse);
 

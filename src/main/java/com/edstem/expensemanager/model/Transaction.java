@@ -1,6 +1,9 @@
 package com.edstem.expensemanager.model;
 
+import com.edstem.expensemanager.constant.Type;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,7 +25,8 @@ public class Transaction {
 
     private String name;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     private Double amount;
     @ManyToOne private Category category;

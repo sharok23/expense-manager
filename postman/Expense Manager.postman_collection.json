@@ -7,24 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "createCategories",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"type\":\"Expense\",\r\n    \"color\":\"#C43095\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": "http://localhost:8080/v1/category"
-			},
-			"response": []
-		},
-		{
 			"name": "getCategories",
 			"request": {
 				"method": "GET",
@@ -47,15 +29,6 @@
 						}
 					}
 				},
-				"url": "http://localhost:8080/v1/transaction"
-			},
-			"response": []
-		},
-		{
-			"name": "getTransactions",
-			"request": {
-				"method": "GET",
-				"header": [],
 				"url": "http://localhost:8080/v1/transaction"
 			},
 			"response": []

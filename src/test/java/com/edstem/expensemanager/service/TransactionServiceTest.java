@@ -5,8 +5,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import com.edstem.expensemanager.constant.Color;
+import com.edstem.expensemanager.constant.Type;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
-import com.edstem.expensemanager.contract.Response.AllTransactionResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.model.Category;
 import com.edstem.expensemanager.model.Transaction;
@@ -39,14 +40,14 @@ public class TransactionServiceTest {
 
     @Test
     void testCreateTransaction() {
-        Category category = new Category(1L, "Investment", "#FCBE44");
+        Category category = new Category(1L, Type.Investment, Color.YELLOW);
 
         when(categoryRepository.findByType(any())).thenReturn(Optional.of(category));
 
         Transaction transaction =
                 Transaction.builder()
                         .name("Test Transaction")
-                        .type("Investment")
+                        .type(Type.Investment)
                         .amount(100.0)
                         .category(category)
                         .build();
@@ -55,37 +56,14 @@ public class TransactionServiceTest {
 
         TransactionRequest request = new TransactionRequest();
         request.setName("Test Transaction");
-        request.setType("Investment");
+        request.setType(Type.Investment);
         request.setAmount(100.0);
 
         TransactionResponse response = transactionService.createTransaction(request);
 
         assertEquals(response.getName(), "Test Transaction");
-        assertEquals(response.getType(), "Investment");
+        assertEquals(response.getType(), Type.Investment);
         assertEquals(response.getAmount(), 100.0);
-    }
-
-    @Test
-    void testGetTransactions() {
-        Transaction transaction =
-                Transaction.builder()
-                        .name("Test Transaction")
-                        .type("Savings")
-                        .amount(200.0)
-                        .category(new Category())
-                        .build();
-
-        List<Transaction> transactionList = new ArrayList<>();
-        transactionList.add(transaction);
-
-        when(transactionRepository.findAll()).thenReturn(transactionList);
-
-        List<TransactionResponse> responseList = transactionService.getTransactions();
-
-        assertEquals(responseList.size(), 1);
-        assertEquals(responseList.get(0).getName(), "Test Transaction");
-        assertEquals(responseList.get(0).getType(), "Savings");
-        assertEquals(responseList.get(0).getAmount(), 200.0);
     }
 
     @Test
@@ -93,7 +71,7 @@ public class TransactionServiceTest {
         Transaction transaction =
                 Transaction.builder()
                         .name("Test Transaction")
-                        .type("Savings")
+                        .type(Type.Savings)
                         .amount(100.0)
                         .category(new Category())
                         .build();
@@ -107,12 +85,12 @@ public class TransactionServiceTest {
 
     @Test
     void testGetTransactionsWithColor() {
-        Category category = new Category(1L, "Investment", "#FCBE44");
+        Category category = new Category(1L, Type.Expense, Color.RED);
 
         Transaction transaction =
                 Transaction.builder()
                         .name("Test Transaction")
-                        .type("Investment")
+                        .type(Type.Expense)
                         .amount(100.0)
                         .category(category)
                         .build();
@@ -122,12 +100,12 @@ public class TransactionServiceTest {
 
         when(transactionRepository.findAll()).thenReturn(transactionList);
 
-        List<AllTransactionResponse> responseList = transactionService.getTransactionsWithColor();
+        List<TransactionResponse> responseList = transactionService.getTransactionsWithColor();
 
         assertEquals(responseList.size(), 1);
         assertEquals(responseList.get(0).getName(), "Test Transaction");
-        assertEquals(responseList.get(0).getType(), "Investment");
+        assertEquals(responseList.get(0).getType(), Type.Expense);
         assertEquals(responseList.get(0).getAmount(), 100.0);
-        assertEquals(responseList.get(0).getColor(), "#FCBE44");
+        assertEquals(responseList.get(0).getColor(), Color.RED);
     }
 }

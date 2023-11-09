@@ -1,14 +1,11 @@
 package com.edstem.expensemanager.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.edstem.expensemanager.contract.Request.CategoryRequest;
 import com.edstem.expensemanager.contract.Response.CategoryResponse;
 import com.edstem.expensemanager.service.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,23 +26,6 @@ public class CategoryControllerTest {
     @Autowired private MockMvc mockMvc;
 
     @MockBean private CategoryService categoryService;
-
-    @Test
-    void testCreateCategories() throws Exception {
-        CategoryRequest request = new CategoryRequest();
-        CategoryResponse expectedResponse = new CategoryResponse();
-
-        when(categoryService.createCategories(any(CategoryRequest.class)))
-                .thenReturn(expectedResponse);
-
-        mockMvc.perform(
-                        post("/v1/category")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(new ObjectMapper().writeValueAsString(request)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(expectedResponse)));
-    }
 
     @Test
     void testGetCategories() throws Exception {
