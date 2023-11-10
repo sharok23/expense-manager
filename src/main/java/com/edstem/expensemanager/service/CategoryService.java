@@ -26,7 +26,6 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @PostConstruct
     public void initializeValue() {
         saveCategory(Type.Investment, Color.YELLOW);
         saveCategory(Type.Savings, Color.BLUE);
