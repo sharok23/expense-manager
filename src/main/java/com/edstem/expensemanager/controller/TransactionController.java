@@ -3,6 +3,8 @@ package com.edstem.expensemanager.controller;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
+
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,9 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransactionController {
     private final TransactionService transactionService;
 
+//    @PostMapping
+//    public TransactionResponse createTransaction(@RequestBody TransactionRequest transaction) {
+//        return transactionService.createTransaction(transaction);
+//    }
+
     @PostMapping
-    public TransactionResponse createTransaction(@RequestBody TransactionRequest transaction) {
-        return transactionService.createTransaction(transaction);
+    public TransactionResponse createTransaction(@RequestBody TransactionRequest transaction, @RequestParam Long userId) {
+        return transactionService.createTransaction(transaction, userId);
     }
 
     @DeleteMapping("/{id}")
@@ -34,5 +42,10 @@ public class TransactionController {
     @GetMapping("/labels")
     public List<TransactionResponse> getTransactionsWithColor() {
         return transactionService.getTransactionsWithColor();
+    }
+
+    @GetMapping("/{date}")
+    public List<TransactionResponse> getTransactionsByDate(@PathVariable LocalDate date) {
+        return transactionService.getTransactionsByDate(date);
     }
 }

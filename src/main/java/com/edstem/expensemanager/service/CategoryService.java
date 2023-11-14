@@ -8,6 +8,8 @@ import com.edstem.expensemanager.repository.CategoryRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
+    @PostConstruct
     public void initializeValue() {
         saveCategory(Type.Investment, Color.YELLOW);
         saveCategory(Type.Savings, Color.BLUE);
