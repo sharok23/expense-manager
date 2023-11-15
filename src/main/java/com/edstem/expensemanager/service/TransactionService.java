@@ -35,7 +35,9 @@ public class TransactionService {
                                                 "Category not found for type "
         + request.getType()));
 
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(
+                        "User not found on id "+ userId));
 
         Transaction transaction =
                 Transaction.builder()
@@ -56,13 +58,16 @@ public class TransactionService {
                         .amount(transaction.getAmount())
                         .color(transaction.getCategory().getColor())
                         .date(transaction.getDate())
-                        .user(transaction.getUser())
+                        .user(transaction.getUser().getId())
                         .build();
 
         return response;
     }
 
-    public String deleteTransactionById(Long id) {
+    public String deleteTransactionById(Long userId, Long id) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(
+                        "User not found on id "+ userId));
         Transaction transaction =
                 transactionRepository
                         .findById(id)
@@ -74,13 +79,24 @@ public class TransactionService {
         return "Transaction " + transaction.getName() + " has been deleted";
     }
 
-    public List<TransactionResponse> getTransactionsWithColor() {
-        List<Transaction> transactions = transactionRepository.findAll();
+    public List<TransactionResponse> getTransactionsWithColor(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(
+                        "User not found on id "+ userId));
+        List<Transaction> transactions = transactionRepository.findByUser(user);
         return transactions.stream()
                 .map(
                         transaction -> {
                             TransactionResponse response =
-                                    modelMapper.map(transaction, TransactionResponse.class);
+                                    TransactionResponse.builder()
+                                            .id(transaction.getId())
+                                            .name(transaction.getName())
+                                            .type(transaction.getType())
+                                            .amount(transaction.getAmount())
+                                            .color(transaction.getCategory().getColor())
+                                            .date(transaction.getDate())
+                                            .user(transaction.getUser().getId())
+                                            .build();
                             if (transaction.getCategory() != null) {
                                 response.setColor(transaction.getCategory().getColor());
                             }
@@ -89,13 +105,30 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-    public List<TransactionResponse> getTransactionsByDate(LocalDate date) {
-        List<Transaction> transactions = transactionRepository.findAllByDate(date);
+    public List<TransactionResponse> getTransactionsByDate(Long userId, LocalDate date) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(
+                        "User not found on id "+ userId));
+        List<Transaction> transactions = transactionRepository.findAllByUserAndDate(user, date);
+
+        if (transactions.isEmpty()) {
+            throw new EntityNotFoundException(
+                    "No transactions found for user with id " + userId + " on date " + date);
+        }
+
         return transactions.stream()
                 .map(
                         transaction -> {
                             TransactionResponse response =
-                                    modelMapper.map(transaction, TransactionResponse.class);
+                                    TransactionResponse.builder()
+                                            .id(transaction.getId())
+                                            .name(transaction.getName())
+                                            .type(transaction.getType())
+                                            .amount(transaction.getAmount())
+                                            .color(transaction.getCategory().getColor())
+                                            .date(transaction.getDate())
+                                            .user(transaction.getUser().getId())
+                                            .build();
                             if (transaction.getCategory() != null) {
                                 response.setColor(transaction.getCategory().getColor());
                             }

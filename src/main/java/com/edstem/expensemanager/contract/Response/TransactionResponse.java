@@ -23,5 +23,5 @@ public class TransactionResponse {
     private Double amount;
     private Color color;
     private LocalDate date;
-    private User user;
+    private Long user;
 }

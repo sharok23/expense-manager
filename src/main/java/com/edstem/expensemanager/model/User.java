@@ -31,7 +31,7 @@ public class User {
     private String hashedPassword;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Transaction> transactions;
 
 }

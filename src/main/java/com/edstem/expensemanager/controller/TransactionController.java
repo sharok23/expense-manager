@@ -35,17 +35,17 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTransactionById(@PathVariable Long id) {
-        return transactionService.deleteTransactionById(id);
+    public String deleteTransactionById(@RequestParam Long userId,@PathVariable Long id) {
+        return transactionService.deleteTransactionById(userId,id);
     }
 
     @GetMapping("/labels")
-    public List<TransactionResponse> getTransactionsWithColor() {
-        return transactionService.getTransactionsWithColor();
+    public List<TransactionResponse> getTransactionsWithColor(@RequestParam Long userId) {
+        return transactionService.getTransactionsWithColor(userId);
     }
 
     @GetMapping("/{date}")
-    public List<TransactionResponse> getTransactionsByDate(@PathVariable LocalDate date) {
-        return transactionService.getTransactionsByDate(date);
+    public List<TransactionResponse> getTransactionsByDate(@RequestParam Long userId,@PathVariable LocalDate date) {
+        return transactionService.getTransactionsByDate(userId,date);
     }
 }
