@@ -24,11 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TransactionController {
     private final TransactionService transactionService;
 
-//    @PostMapping
-//    public TransactionResponse createTransaction(@RequestBody TransactionRequest transaction) {
-//        return transactionService.createTransaction(transaction);
-//    }
-
     @PostMapping
     public TransactionResponse createTransaction(@RequestBody TransactionRequest transaction, @RequestParam Long userId) {
         return transactionService.createTransaction(transaction, userId);

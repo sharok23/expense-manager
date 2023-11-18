@@ -2,6 +2,7 @@ package com.edstem.expensemanager.controller;
 
 import com.edstem.expensemanager.contract.Request.LoginRequest;
 import com.edstem.expensemanager.contract.Request.SignupRequest;
+import com.edstem.expensemanager.contract.Response.LoginResponse;
 import com.edstem.expensemanager.contract.Response.SignupResponse;
 import com.edstem.expensemanager.service.UserService;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Long login(@Valid @RequestBody LoginRequest request) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         return userService.login(request);
     }
 }
