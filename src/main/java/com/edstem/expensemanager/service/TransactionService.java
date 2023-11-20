@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
-    private final ModelMapper modelMapper;
     private final UserRepository userRepository;
 
     public TransactionResponse createTransaction(TransactionRequest request, Long userId) {
