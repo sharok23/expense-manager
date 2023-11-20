@@ -7,6 +7,56 @@
 	},
 	"item": [
 		{
+			"name": "signup",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "User",
+						"password": "74b060b5-4c72-4d74-92a8-573cd2880c79"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"aa@gmail.com\",\r\n    \"email\":\"aaa@gmail.com\",\r\n    \"password\":\"aaa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/v1/user/signup"
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": {
+						"username": "user",
+						"password": "8aaa55de-c021-49b6-b410-8c70f3d50d81"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"aaa@gmail.com\",\r\n    \"password\":\"aaa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8080/v1/user/login"
+			},
+			"response": []
+		},
+		{
 			"name": "getCategories",
 			"request": {
 				"method": "GET",
@@ -18,18 +68,38 @@
 		{
 			"name": "createTransaction",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Salary\",\r\n    \"type\": \"Savings\",\r\n    \"amount\": 500\r\n}",
+					"raw": "{\r\n    \"name\": \"Rent\",\r\n    \"type\": \"Expense\",\r\n    \"amount\": 500,\r\n    \"date\":\"2023-11-11\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://localhost:8080/v1/transaction"
+				"url": {
+					"raw": "http://localhost:8080/v1/transaction?userId=13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"transaction"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "13"
+						}
+					]
+				}
 			},
 			"response": []
 		},
@@ -38,7 +108,25 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:8080/v1/transaction/labels"
+				"url": {
+					"raw": "http://localhost:8080/v1/transaction/labels?userId=17",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"transaction",
+						"labels"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "17"
+						}
+					]
+				}
 			},
 			"response": []
 		},
@@ -47,7 +135,52 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": "http://localhost:8080/v1/transaction/3"
+				"url": {
+					"raw": "http://localhost:8080/v1/transaction/37?userId=13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"transaction",
+						"37"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "13"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTransactionsByDate",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v1/transaction/2023-11-11?userId=13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"transaction",
+						"2023-11-11"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "13"
+						}
+					]
+				}
 			},
 			"response": []
 		}

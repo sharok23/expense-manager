@@ -3,7 +3,6 @@ package com.edstem.expensemanager.controller;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
-
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +24,14 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping
-    public TransactionResponse createTransaction(@RequestBody TransactionRequest transaction, @RequestParam Long userId) {
+    public TransactionResponse createTransaction(
+            @RequestBody TransactionRequest transaction, @RequestParam Long userId) {
         return transactionService.createTransaction(transaction, userId);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTransactionById(@RequestParam Long userId,@PathVariable Long id) {
-        return transactionService.deleteTransactionById(userId,id);
+    public String deleteTransactionById(@RequestParam Long userId, @PathVariable Long id) {
+        return transactionService.deleteTransactionById(userId, id);
     }
 
     @GetMapping("/labels")
@@ -40,7 +40,8 @@ public class TransactionController {
     }
 
     @GetMapping("/{date}")
-    public List<TransactionResponse> getTransactionsByDate(@RequestParam Long userId,@PathVariable LocalDate date) {
-        return transactionService.getTransactionsByDate(userId,date);
+    public List<TransactionResponse> getTransactionsByDate(
+            @RequestParam Long userId, @PathVariable LocalDate date) {
+        return transactionService.getTransactionsByDate(userId, date);
     }
 }

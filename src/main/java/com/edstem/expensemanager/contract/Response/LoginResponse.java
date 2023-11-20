@@ -1,6 +1,5 @@
 package com.edstem.expensemanager.contract.Response;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
