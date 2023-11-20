@@ -26,7 +26,7 @@ GET /{date} : Get a list of transactions based on given date.
 # UserController
 
 Base URL: /v1/user
-Endpoints:
+
 POST /signup : Register a new user. Accepts a SignupRequest and returns a SignupResponse.
 
 POST /login : Authenticate a user. Accepts a LoginRequest and returns a LoginResponse on successful login.
