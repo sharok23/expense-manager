@@ -28,7 +28,7 @@ public class CategoryService {
 
     @PostConstruct
     public void initializeValue() {
-        saveCategory(Type.Investment, Color.YELLOW);
+        saveCategory(Type.Investment, Color.LIME);
         saveCategory(Type.Savings, Color.BLUE);
         saveCategory(Type.Expense, Color.RED);
     }

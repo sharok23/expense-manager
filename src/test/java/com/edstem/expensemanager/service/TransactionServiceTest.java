@@ -24,13 +24,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
 
 public class TransactionServiceTest {
     private TransactionRepository transactionRepository;
     private CategoryRepository categoryRepository;
     private TransactionService transactionService;
-    private ModelMapper modelMapper;
     private UserRepository userRepository;
 
     @BeforeEach
@@ -39,10 +37,8 @@ public class TransactionServiceTest {
         transactionRepository = Mockito.mock(TransactionRepository.class);
         categoryRepository = Mockito.mock(CategoryRepository.class);
         userRepository = Mockito.mock(UserRepository.class);
-        modelMapper = new ModelMapper();
         transactionService =
-                new TransactionService(
-                        transactionRepository, categoryRepository, modelMapper, userRepository);
+                new TransactionService(transactionRepository, categoryRepository, userRepository);
     }
 
     @Test
@@ -133,7 +129,7 @@ public class TransactionServiceTest {
                                 Category.builder()
                                         .id(1L)
                                         .type(Type.Investment)
-                                        .color(Color.YELLOW)
+                                        .color(Color.LIME)
                                         .build())
                         .build();
 
@@ -217,7 +213,7 @@ public class TransactionServiceTest {
                                 Category.builder()
                                         .id(2L)
                                         .type(Type.Investment)
-                                        .color(Color.YELLOW)
+                                        .color(Color.LIME)
                                         .build())
                         .build();
 

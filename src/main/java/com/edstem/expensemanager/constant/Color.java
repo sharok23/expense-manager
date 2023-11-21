@@ -1,7 +1,7 @@
 package com.edstem.expensemanager.constant;
 
 public enum Color {
-    YELLOW,
+    LIME,
     BLUE,
     RED
 }

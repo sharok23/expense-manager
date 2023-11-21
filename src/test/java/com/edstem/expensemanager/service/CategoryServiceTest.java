@@ -35,7 +35,7 @@ public class CategoryServiceTest {
 
     @Test
     void testGetCategories() {
-        Category entity = new Category(1L, Type.Investment, Color.YELLOW);
+        Category entity = new Category(1L, Type.Investment, Color.LIME);
 
         List<Category> categoryList = new ArrayList<>();
         categoryList.add(entity);
@@ -47,7 +47,7 @@ public class CategoryServiceTest {
         assertEquals(responseList.size(), 1);
         assertEquals(responseList.get(0).getId(), 1L);
         assertEquals(responseList.get(0).getType(), Type.Investment.toString());
-        assertEquals(responseList.get(0).getColor(), Color.YELLOW.toString());
+        assertEquals(responseList.get(0).getColor(), Color.LIME.toString());
     }
 
     @Test

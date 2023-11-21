@@ -36,6 +36,11 @@ public class UserControllerTest {
         signupRequest.setPassword("password");
 
         SignupResponse expectedResponse = new SignupResponse();
+        expectedResponse.setId(1L);
+        expectedResponse.setName("TestUser");
+        expectedResponse.setEmail("testusers@example.com");
+        expectedResponse.setHashedPassword("hashedPassword");
+
         when(userService.signUp(any(SignupRequest.class))).thenReturn(expectedResponse);
 
         ObjectMapper objectMapper = new ObjectMapper();

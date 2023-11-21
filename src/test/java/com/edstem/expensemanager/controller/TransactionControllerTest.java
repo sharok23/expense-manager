@@ -116,7 +116,7 @@ public class TransactionControllerTest {
                         .name("Transaction2")
                         .type(Type.Investment)
                         .amount(200.0)
-                        .color(Color.YELLOW)
+                        .color(Color.LIME)
                         .date(LocalDate.now())
                         .user(userId)
                         .build();
