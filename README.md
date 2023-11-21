@@ -30,4 +30,3 @@ Base URL: /v1/user
 POST /signup : Register a new user. Accepts a SignupRequest and returns a SignupResponse.
 
 POST /login : Authenticate a user. Accepts a LoginRequest and returns a LoginResponse on successful login.
-
