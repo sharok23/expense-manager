@@ -1,5 +1,6 @@
 package com.edstem.expensemanager.contract.Request;
 
+import com.edstem.expensemanager.validation.ValidSignUpPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -16,5 +17,6 @@ public class SignupRequest {
     private String email;
 
     @NotBlank(message = "Password cannot be empty")
+    @ValidSignUpPassword
     private String password;
 }
