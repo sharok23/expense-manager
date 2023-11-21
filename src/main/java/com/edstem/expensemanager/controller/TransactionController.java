@@ -3,7 +3,6 @@ package com.edstem.expensemanager.controller;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
-import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -37,11 +36,5 @@ public class TransactionController {
     @GetMapping("/labels")
     public List<TransactionResponse> getTransactionsWithColor(@RequestParam Long userId) {
         return transactionService.getTransactionsWithColor(userId);
-    }
-
-    @GetMapping("/{date}")
-    public List<TransactionResponse> getTransactionsByDate(
-            @RequestParam Long userId, @PathVariable LocalDate date) {
-        return transactionService.getTransactionsByDate(userId, date);
     }
 }

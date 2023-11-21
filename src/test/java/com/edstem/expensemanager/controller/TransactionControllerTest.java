@@ -137,48 +137,4 @@ public class TransactionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(expectedResponse)));
     }
-
-    @Test
-    public void testGetTransactionsByDate() throws Exception {
-        Long userId = 1L;
-
-        TransactionResponse transactionResponse1 =
-                TransactionResponse.builder()
-                        .id(1L)
-                        .name("Transaction1")
-                        .type(Type.Expense)
-                        .amount(100.0)
-                        .color(Color.RED)
-                        .date(LocalDate.now())
-                        .user(userId)
-                        .build();
-
-        TransactionResponse transactionResponse2 =
-                TransactionResponse.builder()
-                        .id(2L)
-                        .name("Transaction2")
-                        .type(Type.Savings)
-                        .amount(200.0)
-                        .color(Color.BLUE)
-                        .date(LocalDate.now())
-                        .user(userId)
-                        .build();
-
-        List<TransactionResponse> expectedResponse =
-                Arrays.asList(transactionResponse1, transactionResponse2);
-
-        when(transactionService.getTransactionsByDate(anyLong(), any(LocalDate.class)))
-                .thenReturn(expectedResponse);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        mockMvc.perform(
-                        get("/v1/transaction/" + LocalDate.now().toString())
-                                .param("userId", String.valueOf(userId))
-                                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(expectedResponse)));
-    }
 }
