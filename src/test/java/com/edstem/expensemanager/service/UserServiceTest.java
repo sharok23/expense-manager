@@ -8,8 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.edstem.expensemanager.contract.Request.LoginRequest;
 import com.edstem.expensemanager.contract.Request.SignupRequest;
-import com.edstem.expensemanager.contract.Response.LoginResponse;
-import com.edstem.expensemanager.contract.Response.SignupResponse;
+import com.edstem.expensemanager.contract.Response.UserResponse;
 import com.edstem.expensemanager.model.User;
 import com.edstem.expensemanager.repository.UserRepository;
 import java.util.Optional;
@@ -38,33 +37,29 @@ public class UserServiceTest {
 
     @Test
     void testSignUp() {
-        when(userRepository.existsByEmail("testuser@example.com")).thenReturn(false);
+        SignupRequest signupRequest = new SignupRequest();
+        signupRequest.setName("testUser");
+        signupRequest.setEmail("testUser@example.com");
+        signupRequest.setPassword("testPassword");
 
-        when(passwordEncoder.encode("password")).thenReturn("hashedPassword");
-
-        User savedUser =
+        User user =
                 User.builder()
                         .id(1L)
-                        .name("TestUser")
-                        .email("testuser@example.com")
+                        .name("testUser")
+                        .email("testUser@example.com")
                         .hashedPassword("hashedPassword")
                         .build();
-        when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-        SignupResponse expectedResponse = new SignupResponse();
-        when(modelMapper.map(savedUser, SignupResponse.class)).thenReturn(expectedResponse);
+        when(userRepository.existsByEmail("testUser@example.com")).thenReturn(false);
+        when(passwordEncoder.encode("testPassword")).thenReturn("hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setName("TestUser");
-        signupRequest.setEmail("testuser@example.com");
-        signupRequest.setPassword("password");
+        UserResponse response = userService.signUp(signupRequest);
 
-        SignupResponse response = userService.signUp(signupRequest);
-
-        assertEquals(expectedResponse, response);
-
+        assertEquals(1L, response.getUserId());
+        verify(userRepository, times(1)).existsByEmail("testUser@example.com");
+        verify(passwordEncoder, times(1)).encode("testPassword");
         verify(userRepository, times(1)).save(any(User.class));
-        verify(modelMapper, times(1)).map(savedUser, SignupResponse.class);
     }
 
     @Test
@@ -86,7 +81,7 @@ public class UserServiceTest {
         correctCredentials.setEmail("existingUser@example.com");
         correctCredentials.setPassword("correctPassword");
 
-        LoginResponse response = userService.login(correctCredentials);
+        UserResponse response = userService.login(correctCredentials);
         assertEquals(1L, response.getUserId());
     }
 }

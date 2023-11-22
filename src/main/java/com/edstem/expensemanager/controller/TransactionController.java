@@ -33,7 +33,7 @@ public class TransactionController {
         return transactionService.deleteTransactionById(userId, id);
     }
 
-    @GetMapping("/labels")
+    @GetMapping("/list")
     public List<TransactionResponse> getTransactionsWithColor(@RequestParam Long userId) {
         return transactionService.getTransactionsWithColor(userId);
     }

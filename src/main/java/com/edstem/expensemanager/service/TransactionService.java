@@ -79,6 +79,9 @@ public class TransactionService {
                                 () ->
                                         new EntityNotFoundException(
                                                 "Transaction not found with id " + id));
+        if (!transaction.getUser().equals(user)) {
+            throw new EntityNotFoundException("The transaction does not belong to the given user");
+        }
         transactionRepository.delete(transaction);
         return "Transaction " + transaction.getName() + " has been deleted";
     }

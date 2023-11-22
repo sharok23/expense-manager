@@ -131,7 +131,7 @@ public class TransactionControllerTest {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         mockMvc.perform(
-                        get("/v1/transaction/labels")
+                        get("/v1/transaction/list")
                                 .param("userId", String.valueOf(userId))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

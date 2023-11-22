@@ -2,8 +2,7 @@ package com.edstem.expensemanager.service;
 
 import com.edstem.expensemanager.contract.Request.LoginRequest;
 import com.edstem.expensemanager.contract.Request.SignupRequest;
-import com.edstem.expensemanager.contract.Response.LoginResponse;
-import com.edstem.expensemanager.contract.Response.SignupResponse;
+import com.edstem.expensemanager.contract.Response.UserResponse;
 import com.edstem.expensemanager.model.User;
 import com.edstem.expensemanager.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
@@ -20,7 +19,7 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public SignupResponse signUp(SignupRequest request) {
+    public UserResponse signUp(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EntityExistsException("Invalid Signup");
         }
@@ -31,10 +30,12 @@ public class UserService {
                         .hashedPassword(passwordEncoder.encode(request.getPassword()))
                         .build();
         user = userRepository.save(user);
-        return modelMapper.map(user, SignupResponse.class);
+        UserResponse response = new UserResponse();
+        response.setUserId(user.getId());
+        return response;
     }
 
-    public LoginResponse login(LoginRequest request) {
+    public UserResponse login(LoginRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
         if (!userRepository.existsByEmail(email)) {
@@ -42,7 +43,7 @@ public class UserService {
         }
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         if (passwordEncoder.matches(password, user.getHashedPassword())) {
-            LoginResponse response = new LoginResponse();
+            UserResponse response = new UserResponse();
             response.setUserId(user.getId());
             return response;
         }

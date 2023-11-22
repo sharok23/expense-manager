@@ -1,14 +1,15 @@
 package com.edstem.expensemanager.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.edstem.expensemanager.contract.Request.LoginRequest;
 import com.edstem.expensemanager.contract.Request.SignupRequest;
-import com.edstem.expensemanager.contract.Response.LoginResponse;
-import com.edstem.expensemanager.contract.Response.SignupResponse;
+import com.edstem.expensemanager.contract.Response.UserResponse;
 import com.edstem.expensemanager.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -31,15 +32,12 @@ public class UserControllerTest {
     @Test
     void testSignUp() throws Exception {
         SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setName("TestUser");
-        signupRequest.setEmail("testusers@example.com");
-        signupRequest.setPassword("password");
+        signupRequest.setName("testUser");
+        signupRequest.setEmail("testUser@example.com");
+        signupRequest.setPassword("testPassword");
 
-        SignupResponse expectedResponse = new SignupResponse();
-        expectedResponse.setId(1L);
-        expectedResponse.setName("TestUser");
-        expectedResponse.setEmail("testusers@example.com");
-        expectedResponse.setHashedPassword("hashedPassword");
+        UserResponse expectedResponse = new UserResponse();
+        expectedResponse.setUserId(1L);
 
         when(userService.signUp(any(SignupRequest.class))).thenReturn(expectedResponse);
 
@@ -52,6 +50,8 @@ public class UserControllerTest {
                                 .content(jsonRequest))
                 .andExpect(status().isOk())
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(expectedResponse)));
+
+        verify(userService, times(1)).signUp(any(SignupRequest.class));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class UserControllerTest {
         loginRequest.setEmail("testusers@example.com");
         loginRequest.setPassword("password");
 
-        LoginResponse expectedResponse = new LoginResponse();
+        UserResponse expectedResponse = new UserResponse();
 
         when(userService.login(any(LoginRequest.class))).thenReturn(expectedResponse);
 
