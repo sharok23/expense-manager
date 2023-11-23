@@ -8,7 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.edstem.expensemanager.contract.Request.LoginRequest;
 import com.edstem.expensemanager.contract.Request.SignupRequest;
-import com.edstem.expensemanager.contract.Response.UserResponse;
+import com.edstem.expensemanager.contract.Response.LoginResponse;
+import com.edstem.expensemanager.contract.Response.SignupResponse;
 import com.edstem.expensemanager.model.User;
 import com.edstem.expensemanager.repository.UserRepository;
 import java.util.Optional;
@@ -54,7 +55,7 @@ public class UserServiceTest {
         when(passwordEncoder.encode("testPassword")).thenReturn("hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        UserResponse response = userService.signUp(signupRequest);
+        SignupResponse response = userService.signUp(signupRequest);
 
         assertEquals(1L, response.getUserId());
         verify(userRepository, times(1)).existsByEmail("testUser@example.com");
@@ -81,7 +82,7 @@ public class UserServiceTest {
         correctCredentials.setEmail("existingUser@example.com");
         correctCredentials.setPassword("correctPassword");
 
-        UserResponse response = userService.login(correctCredentials);
+        LoginResponse response = userService.login(correctCredentials);
         assertEquals(1L, response.getUserId());
     }
 }

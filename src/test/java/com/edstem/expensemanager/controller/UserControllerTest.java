@@ -9,7 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.edstem.expensemanager.contract.Request.LoginRequest;
 import com.edstem.expensemanager.contract.Request.SignupRequest;
-import com.edstem.expensemanager.contract.Response.UserResponse;
+import com.edstem.expensemanager.contract.Response.LoginResponse;
+import com.edstem.expensemanager.contract.Response.SignupResponse;
 import com.edstem.expensemanager.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ public class UserControllerTest {
         signupRequest.setEmail("testUser@example.com");
         signupRequest.setPassword("testPassword");
 
-        UserResponse expectedResponse = new UserResponse();
+        SignupResponse expectedResponse = new SignupResponse();
         expectedResponse.setUserId(1L);
 
         when(userService.signUp(any(SignupRequest.class))).thenReturn(expectedResponse);
@@ -60,7 +61,9 @@ public class UserControllerTest {
         loginRequest.setEmail("testusers@example.com");
         loginRequest.setPassword("password");
 
-        UserResponse expectedResponse = new UserResponse();
+        LoginResponse expectedResponse = new LoginResponse();
+        expectedResponse.setUserId(1L);
+        expectedResponse.setName("Test");
 
         when(userService.login(any(LoginRequest.class))).thenReturn(expectedResponse);
 

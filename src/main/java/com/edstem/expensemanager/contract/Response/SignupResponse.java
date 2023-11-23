@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserResponse {
+public class SignupResponse {
     private Long userId;
 }
