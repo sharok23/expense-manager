@@ -108,9 +108,6 @@ public class TransactionService {
                                             .date(transaction.getDate())
                                             .user(transaction.getUser().getId())
                                             .build();
-                            if (transaction.getCategory() != null) {
-                                response.setColor(transaction.getCategory().getColor());
-                            }
                             return response;
                         })
                 .collect(Collectors.toList());
