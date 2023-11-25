@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class TransactionRequest {
 
     @NotBlank(message = "Name cannot be empty")
