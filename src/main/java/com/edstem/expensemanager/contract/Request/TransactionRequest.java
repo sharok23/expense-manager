@@ -2,10 +2,10 @@ package com.edstem.expensemanager.contract.Request;
 
 import com.edstem.expensemanager.constant.Type;
 import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDate;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
