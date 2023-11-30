@@ -5,6 +5,10 @@ import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,5 +40,11 @@ public class TransactionController {
     @GetMapping("/list")
     public List<TransactionResponse> getTransactionsWithColor(@RequestParam Long userId) {
         return transactionService.getTransactionsWithColor(userId);
+    }
+
+    @GetMapping("/pageable")
+    public Page<TransactionResponse> getPageable(
+            @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        return transactionService.getPageable(pageable);
     }
 }

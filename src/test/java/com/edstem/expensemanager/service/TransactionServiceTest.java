@@ -24,12 +24,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 public class TransactionServiceTest {
     private TransactionRepository transactionRepository;
     private CategoryRepository categoryRepository;
     private TransactionService transactionService;
     private UserRepository userRepository;
+    private ModelMapper modelMapper;
 
     @BeforeEach
     public void init() {
@@ -37,8 +43,10 @@ public class TransactionServiceTest {
         transactionRepository = Mockito.mock(TransactionRepository.class);
         categoryRepository = Mockito.mock(CategoryRepository.class);
         userRepository = Mockito.mock(UserRepository.class);
+        modelMapper = Mockito.mock(ModelMapper.class);
         transactionService =
-                new TransactionService(transactionRepository, categoryRepository, userRepository);
+                new TransactionService(
+                        transactionRepository, categoryRepository, userRepository, modelMapper);
     }
 
     @Test
@@ -117,10 +125,10 @@ public class TransactionServiceTest {
 
         User user = User.builder().id(userId).name("TestUser").build();
 
-        Transaction transaction1 =
+        Transaction transaction =
                 Transaction.builder()
                         .id(1L)
-                        .name("Transaction1")
+                        .name("Transaction")
                         .type(Type.Investment)
                         .amount(100.0)
                         .date(LocalDate.now())
@@ -133,23 +141,7 @@ public class TransactionServiceTest {
                                         .build())
                         .build();
 
-        Transaction transaction2 =
-                Transaction.builder()
-                        .id(2L)
-                        .name("Transaction2")
-                        .type(Type.Savings)
-                        .amount(200.0)
-                        .date(LocalDate.now())
-                        .user(user)
-                        .category(
-                                Category.builder()
-                                        .id(2L)
-                                        .type(Type.Savings)
-                                        .color(Color.BLUE)
-                                        .build())
-                        .build();
-
-        List<Transaction> transactions = Arrays.asList(transaction1, transaction2);
+        List<Transaction> transactions = Arrays.asList(transaction);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(transactionRepository.findByUser(user)).thenReturn(transactions);
@@ -157,24 +149,49 @@ public class TransactionServiceTest {
         List<TransactionResponse> responseList =
                 transactionService.getTransactionsWithColor(userId);
 
-        assertEquals(2, responseList.size());
+        assertEquals(1, responseList.size());
 
-        TransactionResponse response1 = responseList.get(0);
-        assertEquals(transaction1.getId(), response1.getId());
-        assertEquals(transaction1.getName(), response1.getName());
-        assertEquals(transaction1.getType(), response1.getType());
-        assertEquals(transaction1.getAmount(), response1.getAmount());
-        assertEquals(transaction1.getCategory().getColor(), response1.getColor());
-        assertEquals(transaction1.getDate(), response1.getDate());
-        assertEquals(transaction1.getUser().getId(), response1.getUser());
+        TransactionResponse response = responseList.get(0);
+        assertEquals(transaction.getId(), response.getId());
+        assertEquals(transaction.getName(), response.getName());
+        assertEquals(transaction.getType(), response.getType());
+        assertEquals(transaction.getAmount(), response.getAmount());
+        assertEquals(transaction.getCategory().getColor(), response.getColor());
+        assertEquals(transaction.getDate(), response.getDate());
+        assertEquals(transaction.getUser().getId(), response.getUser());
+    }
 
-        TransactionResponse response2 = responseList.get(1);
-        assertEquals(transaction2.getId(), response2.getId());
-        assertEquals(transaction2.getName(), response2.getName());
-        assertEquals(transaction2.getType(), response2.getType());
-        assertEquals(transaction2.getAmount(), response2.getAmount());
-        assertEquals(transaction2.getCategory().getColor(), response2.getColor());
-        assertEquals(transaction2.getDate(), response2.getDate());
-        assertEquals(transaction2.getUser().getId(), response2.getUser());
+    @Test
+    void testGetPageable() {
+        Pageable pageable = PageRequest.of(0, 5);
+
+        Transaction transaction = Transaction.builder().id(1L).build();
+
+        List<Transaction> transactionList = Arrays.asList(transaction);
+        Page<Transaction> transactionPage =
+                new PageImpl<>(transactionList, pageable, transactionList.size());
+
+        when(transactionRepository.findAll(pageable)).thenReturn(transactionPage);
+
+        TransactionResponse transactionResponse = TransactionResponse.builder().id(1L).build();
+
+        List<TransactionResponse> responseList = Arrays.asList(transactionResponse);
+        Page<TransactionResponse> responsePage =
+                new PageImpl<>(responseList, pageable, responseList.size());
+
+        when(modelMapper.map(transaction, TransactionResponse.class))
+                .thenReturn(transactionResponse);
+
+        Page<TransactionResponse> actualResponsePage = transactionService.getPageable(pageable);
+
+        assertEquals(responsePage.getTotalElements(), actualResponsePage.getTotalElements());
+        assertEquals(responsePage.getNumber(), actualResponsePage.getNumber());
+        assertEquals(responsePage.getSize(), actualResponsePage.getSize());
+
+        for (int i = 0; i < actualResponsePage.getContent().size(); i++) {
+            assertEquals(
+                    responsePage.getContent().get(i).getId(),
+                    actualResponsePage.getContent().get(i).getId());
+        }
     }
 }

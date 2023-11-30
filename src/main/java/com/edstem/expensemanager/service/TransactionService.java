@@ -12,6 +12,9 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +23,7 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     public TransactionResponse createTransaction(TransactionRequest request, Long userId) {
         Category category =
@@ -111,5 +115,10 @@ public class TransactionService {
                             return response;
                         })
                 .collect(Collectors.toList());
+    }
+
+    public Page<TransactionResponse> getPageable(Pageable pageable) {
+        Page<Transaction> tickets = transactionRepository.findAll(pageable);
+        return tickets.map(appList -> modelMapper.map(appList, TransactionResponse.class));
     }
 }

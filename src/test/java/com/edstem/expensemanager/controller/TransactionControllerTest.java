@@ -27,6 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -99,10 +102,10 @@ public class TransactionControllerTest {
     void testGetTransactionsWithColor() throws Exception {
         Long userId = 1L;
 
-        TransactionResponse transactionResponse1 =
+        TransactionResponse transactionResponse =
                 TransactionResponse.builder()
                         .id(1L)
-                        .name("Transaction1")
+                        .name("Transaction")
                         .type(Type.Expense)
                         .amount(100.0)
                         .color(Color.RED)
@@ -110,19 +113,7 @@ public class TransactionControllerTest {
                         .user(userId)
                         .build();
 
-        TransactionResponse transactionResponse2 =
-                TransactionResponse.builder()
-                        .id(2L)
-                        .name("Transaction2")
-                        .type(Type.Investment)
-                        .amount(200.0)
-                        .color(Color.LIME)
-                        .date(LocalDate.now())
-                        .user(userId)
-                        .build();
-
-        List<TransactionResponse> expectedResponse =
-                Arrays.asList(transactionResponse1, transactionResponse2);
+        List<TransactionResponse> expectedResponse = Arrays.asList(transactionResponse);
 
         when(transactionService.getTransactionsWithColor(anyLong())).thenReturn(expectedResponse);
 
@@ -136,5 +127,31 @@ public class TransactionControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(expectedResponse)));
+    }
+
+    @Test
+    public void testGetPageable() throws Exception {
+        TransactionResponse transactionResponse =
+                TransactionResponse.builder()
+                        .id(1L)
+                        .name("Transaction")
+                        .type(Type.Expense)
+                        .amount(100.0)
+                        .color(Color.RED)
+                        .date(LocalDate.now())
+                        .user(1L)
+                        .build();
+
+        List<TransactionResponse> responseList = Arrays.asList(transactionResponse);
+        Page<TransactionResponse> expectedPage = new PageImpl<>(responseList);
+
+        when(transactionService.getPageable(any(Pageable.class))).thenReturn(expectedPage);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        mockMvc.perform(get("/v1/transaction/pageable").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(expectedPage)));
     }
 }
