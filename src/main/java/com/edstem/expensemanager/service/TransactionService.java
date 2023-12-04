@@ -2,13 +2,13 @@ package com.edstem.expensemanager.service;
 
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
+import com.edstem.expensemanager.exception.EntityNotFoundException;
 import com.edstem.expensemanager.model.Category;
 import com.edstem.expensemanager.model.Transaction;
 import com.edstem.expensemanager.model.User;
 import com.edstem.expensemanager.repository.CategoryRepository;
 import com.edstem.expensemanager.repository.TransactionRepository;
 import com.edstem.expensemanager.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -29,19 +29,12 @@ public class TransactionService {
         Category category =
                 categoryRepository
                         .findByType(request.getType())
-                        .orElseThrow(
-                                () ->
-                                        new RuntimeException(
-                                                "Category not found for type "
-                                                        + request.getType()));
+                        .orElseThrow(() -> new EntityNotFoundException("category"));
 
         User user =
                 userRepository
                         .findById(userId)
-                        .orElseThrow(
-                                () ->
-                                        new EntityNotFoundException(
-                                                "User not found on id " + userId));
+                        .orElseThrow(() -> new EntityNotFoundException("user", userId));
 
         Transaction transaction =
                 Transaction.builder()
@@ -72,19 +65,13 @@ public class TransactionService {
         User user =
                 userRepository
                         .findById(userId)
-                        .orElseThrow(
-                                () ->
-                                        new EntityNotFoundException(
-                                                "User not found on id " + userId));
+                        .orElseThrow(() -> new EntityNotFoundException("user", userId));
         Transaction transaction =
                 transactionRepository
                         .findById(id)
-                        .orElseThrow(
-                                () ->
-                                        new EntityNotFoundException(
-                                                "Transaction not found with id " + id));
+                        .orElseThrow(() -> new EntityNotFoundException("transaction", id));
         if (!transaction.getUser().equals(user)) {
-            throw new EntityNotFoundException("The transaction does not belong to the given user");
+            throw new EntityNotFoundException("transaction");
         }
         transactionRepository.delete(transaction);
         return "Transaction " + transaction.getName() + " has been deleted";
@@ -94,10 +81,7 @@ public class TransactionService {
         User user =
                 userRepository
                         .findById(userId)
-                        .orElseThrow(
-                                () ->
-                                        new EntityNotFoundException(
-                                                "User not found on id " + userId));
+                        .orElseThrow(() -> new EntityNotFoundException("user", userId));
         List<Transaction> transactions = transactionRepository.findByUser(user);
         return transactions.stream()
                 .map(

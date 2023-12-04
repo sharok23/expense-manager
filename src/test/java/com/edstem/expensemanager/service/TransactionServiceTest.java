@@ -1,15 +1,15 @@
 package com.edstem.expensemanager.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.edstem.expensemanager.constant.Color;
 import com.edstem.expensemanager.constant.Type;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
+import com.edstem.expensemanager.exception.EntityNotFoundException;
 import com.edstem.expensemanager.model.Category;
 import com.edstem.expensemanager.model.Transaction;
 import com.edstem.expensemanager.model.User;
@@ -17,6 +17,7 @@ import com.edstem.expensemanager.repository.CategoryRepository;
 import com.edstem.expensemanager.repository.TransactionRepository;
 import com.edstem.expensemanager.repository.UserRepository;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +51,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void testCreateTransaction() {
+    void testCreateTransactionWithExceptions() {
         TransactionRequest request = new TransactionRequest();
         request.setName("TestTransaction");
         request.setType(Type.Expense);
@@ -63,7 +64,17 @@ public class TransactionServiceTest {
 
         User user = User.builder().id(userId).name("TestUser").build();
 
+        when(categoryRepository.findByType(request.getType())).thenReturn(Optional.empty());
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> transactionService.createTransaction(request, userId));
+
         when(categoryRepository.findByType(request.getType())).thenReturn(Optional.of(category));
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> transactionService.createTransaction(request, userId));
+
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(transactionRepository.save(any(Transaction.class)))
                 .thenAnswer(
@@ -95,28 +106,33 @@ public class TransactionServiceTest {
     @Test
     void testDeleteTransactionById() {
         Long userId = 1L;
-        Long transactionId = 2L;
-        String transactionName = "TestTransaction";
+        Long transactionId = 1L;
 
-        User user = User.builder().id(userId).name("TestUser").build();
-
+        User user = User.builder().id(userId).name("TestUser 1").build();
         Transaction transaction =
-                Transaction.builder()
-                        .id(transactionId)
-                        .name(transactionName)
-                        .type(Type.Investment)
-                        .amount(100.0)
-                        .date(LocalDate.now())
-                        .user(user)
-                        .build();
+                Transaction.builder().id(transactionId).name("TestTransaction").user(user).build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> transactionService.deleteTransactionById(userId, transactionId));
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(transactionRepository.findById(transactionId)).thenReturn(Optional.empty());
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> transactionService.deleteTransactionById(userId, transactionId));
+
         when(transactionRepository.findById(transactionId)).thenReturn(Optional.of(transaction));
+        when(userRepository.findById(2L))
+                .thenReturn(Optional.of(User.builder().id(2L).name("TestUser 2").build()));
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> transactionService.deleteTransactionById(2L, transactionId));
 
-        String result = transactionService.deleteTransactionById(userId, transactionId);
-
-        verify(transactionRepository, times(1)).delete(transaction);
-        assertEquals("Transaction " + transactionName + " has been deleted", result);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        String response = transactionService.deleteTransactionById(userId, transactionId);
+        assertEquals("Transaction " + transaction.getName() + " has been deleted", response);
     }
 
     @Test
@@ -124,34 +140,30 @@ public class TransactionServiceTest {
         Long userId = 1L;
 
         User user = User.builder().id(userId).name("TestUser").build();
-
+        Category category = new Category(1L, Type.Expense, Color.RED);
         Transaction transaction =
                 Transaction.builder()
                         .id(1L)
-                        .name("Transaction")
-                        .type(Type.Investment)
-                        .amount(100.0)
-                        .date(LocalDate.now())
+                        .name("TestTransaction")
                         .user(user)
-                        .category(
-                                Category.builder()
-                                        .id(1L)
-                                        .type(Type.Investment)
-                                        .color(Color.LIME)
-                                        .build())
+                        .category(category)
                         .build();
 
-        List<Transaction> transactions = Arrays.asList(transaction);
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(transaction);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> transactionService.getTransactionsWithColor(userId));
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(transactionRepository.findByUser(user)).thenReturn(transactions);
 
-        List<TransactionResponse> responseList =
-                transactionService.getTransactionsWithColor(userId);
+        List<TransactionResponse> responses = transactionService.getTransactionsWithColor(userId);
+        assertEquals(1, responses.size());
 
-        assertEquals(1, responseList.size());
-
-        TransactionResponse response = responseList.get(0);
+        TransactionResponse response = responses.get(0);
         assertEquals(transaction.getId(), response.getId());
         assertEquals(transaction.getName(), response.getName());
         assertEquals(transaction.getType(), response.getType());

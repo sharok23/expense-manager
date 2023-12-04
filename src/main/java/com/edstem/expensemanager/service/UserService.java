@@ -4,10 +4,9 @@ import com.edstem.expensemanager.contract.Request.LoginRequest;
 import com.edstem.expensemanager.contract.Request.SignupRequest;
 import com.edstem.expensemanager.contract.Response.LoginResponse;
 import com.edstem.expensemanager.contract.Response.SignupResponse;
+import com.edstem.expensemanager.exception.InvalidUserException;
 import com.edstem.expensemanager.model.User;
 import com.edstem.expensemanager.repository.UserRepository;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class UserService {
 
     public SignupResponse signUp(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new EntityExistsException("Invalid Signup");
+            throw new InvalidUserException("signup");
         }
         User user =
                 User.builder()
@@ -38,7 +37,7 @@ public class UserService {
         String email = request.getEmail();
         String password = request.getPassword();
         if (!userRepository.existsByEmail(email)) {
-            throw new EntityNotFoundException("Invalid login");
+            throw new InvalidUserException("login");
         }
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         if (passwordEncoder.matches(password, user.getHashedPassword())) {
@@ -47,6 +46,6 @@ public class UserService {
             response.setName(user.getName());
             return response;
         }
-        throw new RuntimeException("Invalid login");
+        throw new InvalidUserException("login");
     }
 }

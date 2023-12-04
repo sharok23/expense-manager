@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fe405ba8-7063-4f90-ac80-a1b4977324f4",
+		"_postman_id": "c84f1600-ee8f-4b74-bc1f-852984f6c228",
 		"name": "Expense Manager",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "28741936"
@@ -20,7 +20,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\":\"Tom\",\r\n    \"email\":\"tom@gmail.com\",\r\n    \"password\":\"tom@123\"\r\n}",
+					"raw": "{\r\n    \"name\":\"sharok\",\r\n    \"email\":\"sharok@gmail.com\",\r\n    \"password\":\"Hellow@123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -45,7 +45,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\":\"sharuk@gmail.com\",\r\n    \"password\":\"sharuk@123\"\r\n}",
+					"raw": "{\r\n    \"email\":\"sharok@gmail.com\",\r\n    \"password\":\"Hellow@123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -75,7 +75,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Stocks\",\r\n    \"type\": \"Investment\",\r\n    \"amount\": 500,\r\n    \"date\":\"2023-11-11\"\r\n}",
+					"raw": "{\r\n    \"name\": \"Stocks\",\r\n    \"type\": \"Savings\",\r\n    \"amount\": 1000,\r\n    \"date\":\"2023-11-11\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -83,7 +83,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/v1/transaction?userId=2",
+					"raw": "http://localhost:8080/v1/transaction?userId=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -96,7 +96,7 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "2"
+							"value": "1"
 						}
 					]
 				}
@@ -109,7 +109,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/v1/transaction/list?userId=1",
+					"raw": "http://localhost:8080/v1/transaction/list?userId=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -123,7 +123,7 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "1"
+							"value": "2"
 						}
 					]
 				}
@@ -136,7 +136,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/v1/transaction/1?userId=1",
+					"raw": "http://localhost:8080/v1/transaction/10?userId=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -145,12 +145,50 @@
 					"path": [
 						"v1",
 						"transaction",
-						"1"
+						"10"
 					],
 					"query": [
 						{
 							"key": "userId",
 							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pagination",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v1/transaction/pageable?page=0&size=2&sort=id,asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"transaction",
+						"pageable"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "2"
+						},
+						{
+							"key": "sort",
+							"value": "id,asc"
 						}
 					]
 				}
