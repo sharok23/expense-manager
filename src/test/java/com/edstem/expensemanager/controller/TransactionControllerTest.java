@@ -14,6 +14,7 @@ import com.edstem.expensemanager.constant.Color;
 import com.edstem.expensemanager.constant.Type;
 import com.edstem.expensemanager.contract.Request.ListTransactionRequest;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
+import com.edstem.expensemanager.contract.Response.TransactionListResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,7 +112,9 @@ public class TransactionControllerTest {
                         .user(userId)
                         .build();
 
-        List<TransactionResponse> expectedResponse = Arrays.asList(transactionResponse);
+        List<TransactionResponse> transactionResponses = Arrays.asList(transactionResponse);
+        TransactionListResponse expectedResponse =
+                new TransactionListResponse(transactionResponses, 1L);
 
         when(transactionService.listTransactions(anyLong(), any(ListTransactionRequest.class)))
                 .thenReturn(expectedResponse);

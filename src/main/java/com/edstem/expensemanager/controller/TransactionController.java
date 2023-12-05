@@ -2,9 +2,9 @@ package com.edstem.expensemanager.controller;
 
 import com.edstem.expensemanager.contract.Request.ListTransactionRequest;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
+import com.edstem.expensemanager.contract.Response.TransactionListResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,7 +34,7 @@ public class TransactionController {
     }
 
     @PostMapping("/list")
-    public List<TransactionResponse> listTransactions(
+    public TransactionListResponse listTransactions(
             @RequestParam Long userId, @RequestBody ListTransactionRequest request) {
         return transactionService.listTransactions(userId, request);
     }

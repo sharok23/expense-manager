@@ -9,6 +9,7 @@ import com.edstem.expensemanager.constant.Color;
 import com.edstem.expensemanager.constant.Type;
 import com.edstem.expensemanager.contract.Request.ListTransactionRequest;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
+import com.edstem.expensemanager.contract.Response.TransactionListResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.exception.EntityNotFoundException;
 import com.edstem.expensemanager.model.Category;
@@ -132,8 +133,7 @@ public class TransactionServiceTest {
     @Test
     void testListTransactions() {
         Long userId = 1L;
-        int pageNumber = 0;
-        int pageSize = 10;
+        ListTransactionRequest request = new ListTransactionRequest(0, 10);
 
         User user = User.builder().id(userId).name("TestUser").build();
         Category category = new Category(1L, Type.Expense, Color.RED);
@@ -151,28 +151,30 @@ public class TransactionServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
         assertThrows(
                 EntityNotFoundException.class,
-                () ->
-                        transactionService.listTransactions(
-                                userId, new ListTransactionRequest(pageNumber, pageSize)));
+                () -> transactionService.listTransactions(userId, request));
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(transactionRepository.findByUser(
                         user,
-                        PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "date"))))
+                        PageRequest.of(
+                                request.getPageNumber(),
+                                request.getPageSize(),
+                                Sort.by(Sort.Direction.DESC, "date"))))
                 .thenReturn(new PageImpl<>(transactions));
 
-        List<TransactionResponse> responses =
-                transactionService.listTransactions(
-                        userId, new ListTransactionRequest(pageNumber, pageSize));
-        assertEquals(1, responses.size());
+        when(transactionRepository.countByUser(user)).thenReturn(1L);
 
-        TransactionResponse response = responses.get(0);
-        assertEquals(transaction.getId(), response.getId());
-        assertEquals(transaction.getName(), response.getName());
-        assertEquals(transaction.getCategory().getType(), response.getType());
-        assertEquals(transaction.getAmount(), response.getAmount());
-        assertEquals(transaction.getCategory().getColor(), response.getColor());
-        assertEquals(transaction.getDate(), response.getDate());
-        assertEquals(transaction.getUser().getId(), response.getUser());
+        TransactionListResponse response = transactionService.listTransactions(userId, request);
+        assertEquals(1, response.getTransactions().size());
+        assertEquals(1L, response.getTotalTransactions());
+
+        TransactionResponse transactionResponse = response.getTransactions().get(0);
+        assertEquals(transaction.getId(), transactionResponse.getId());
+        assertEquals(transaction.getName(), transactionResponse.getName());
+        assertEquals(transaction.getCategory().getType(), transactionResponse.getType());
+        assertEquals(transaction.getAmount(), transactionResponse.getAmount());
+        assertEquals(transaction.getCategory().getColor(), transactionResponse.getColor());
+        assertEquals(transaction.getDate(), transactionResponse.getDate());
+        assertEquals(transaction.getUser().getId(), transactionResponse.getUser());
     }
 }

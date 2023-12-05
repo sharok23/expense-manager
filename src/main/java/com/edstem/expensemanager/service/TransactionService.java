@@ -2,6 +2,7 @@ package com.edstem.expensemanager.service;
 
 import com.edstem.expensemanager.contract.Request.ListTransactionRequest;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
+import com.edstem.expensemanager.contract.Response.TransactionListResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.exception.EntityNotFoundException;
 import com.edstem.expensemanager.model.Category;
@@ -77,7 +78,7 @@ public class TransactionService {
         return "Transaction " + transaction.getName() + " has been deleted";
     }
 
-    public List<TransactionResponse> listTransactions(Long userId, ListTransactionRequest request) {
+    public TransactionListResponse listTransactions(Long userId, ListTransactionRequest request) {
         Pageable page =
                 PageRequest.of(
                         request.getPageNumber(),
@@ -104,6 +105,11 @@ public class TransactionService {
                                                 .build())
                         .collect(Collectors.toList());
 
-        return transactions;
+        Long totalTransactions = transactionRepository.countByUser(user);
+
+        return TransactionListResponse.builder()
+                .transactions(transactions)
+                .totalTransactions(totalTransactions)
+                .build();
     }
 }
