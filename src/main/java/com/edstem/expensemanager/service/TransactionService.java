@@ -1,5 +1,6 @@
 package com.edstem.expensemanager.service;
 
+import com.edstem.expensemanager.contract.Request.ListTransactionRequest;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.exception.EntityNotFoundException;
@@ -12,9 +13,9 @@ import com.edstem.expensemanager.repository.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +24,6 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
 
     public TransactionResponse createTransaction(TransactionRequest request, Long userId) {
         Category category =
@@ -39,7 +39,7 @@ public class TransactionService {
         Transaction transaction =
                 Transaction.builder()
                         .name(request.getName())
-                        .type(request.getType())
+                        //                        .type(request.getType())
                         .amount(request.getAmount())
                         .category(category)
                         .date(request.getDate())
@@ -51,7 +51,7 @@ public class TransactionService {
                 TransactionResponse.builder()
                         .id(transaction.getId())
                         .name(transaction.getName())
-                        .type(transaction.getType())
+                        .type(transaction.getCategory().getType())
                         .amount(transaction.getAmount())
                         .color(transaction.getCategory().getColor())
                         .date(transaction.getDate())
@@ -77,32 +77,33 @@ public class TransactionService {
         return "Transaction " + transaction.getName() + " has been deleted";
     }
 
-    public List<TransactionResponse> getTransactionsWithColor(Long userId) {
+    public List<TransactionResponse> listTransactions(Long userId, ListTransactionRequest request) {
+        Pageable page =
+                PageRequest.of(
+                        request.getPageNumber(),
+                        request.getPageSize(),
+                        Sort.by(Sort.Direction.DESC, "date"));
+
         User user =
                 userRepository
                         .findById(userId)
                         .orElseThrow(() -> new EntityNotFoundException("user", userId));
-        List<Transaction> transactions = transactionRepository.findByUser(user);
-        return transactions.stream()
-                .map(
-                        transaction -> {
-                            TransactionResponse response =
-                                    TransactionResponse.builder()
-                                            .id(transaction.getId())
-                                            .name(transaction.getName())
-                                            .type(transaction.getType())
-                                            .amount(transaction.getAmount())
-                                            .color(transaction.getCategory().getColor())
-                                            .date(transaction.getDate())
-                                            .user(transaction.getUser().getId())
-                                            .build();
-                            return response;
-                        })
-                .collect(Collectors.toList());
-    }
 
-    public Page<TransactionResponse> getPageable(Pageable pageable) {
-        Page<Transaction> tickets = transactionRepository.findAll(pageable);
-        return tickets.map(appList -> modelMapper.map(appList, TransactionResponse.class));
+        List<TransactionResponse> transactions =
+                transactionRepository.findByUser(user, page).stream()
+                        .map(
+                                transaction ->
+                                        TransactionResponse.builder()
+                                                .id(transaction.getId())
+                                                .name(transaction.getName())
+                                                .type(transaction.getCategory().getType())
+                                                .amount(transaction.getAmount())
+                                                .color(transaction.getCategory().getColor())
+                                                .date(transaction.getDate())
+                                                .user(transaction.getUser().getId())
+                                                .build())
+                        .collect(Collectors.toList());
+
+        return transactions;
     }
 }

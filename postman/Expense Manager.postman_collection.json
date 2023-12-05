@@ -104,12 +104,21 @@
 			"response": []
 		},
 		{
-			"name": "getTransactionsWithColor",
+			"name": "listTransactions",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pageNumber\": 0,\r\n    \"pageSize\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/v1/transaction/list?userId=2",
+					"raw": "http://localhost:8080/v1/transaction/list?userId=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -123,7 +132,7 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "2"
+							"value": "1"
 						}
 					]
 				}
@@ -136,7 +145,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/v1/transaction/10?userId=1",
+					"raw": "http://localhost:8080/v1/transaction/4?userId=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -145,50 +154,12 @@
 					"path": [
 						"v1",
 						"transaction",
-						"10"
+						"4"
 					],
 					"query": [
 						{
 							"key": "userId",
 							"value": "1"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Pagination",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/v1/transaction/pageable?page=0&size=2&sort=id,asc",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"transaction",
-						"pageable"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "0"
-						},
-						{
-							"key": "size",
-							"value": "2"
-						},
-						{
-							"key": "sort",
-							"value": "id,asc"
 						}
 					]
 				}

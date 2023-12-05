@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -13,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.edstem.expensemanager.constant.Color;
 import com.edstem.expensemanager.constant.Type;
+import com.edstem.expensemanager.contract.Request.ListTransactionRequest;
 import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
@@ -27,9 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -99,8 +96,9 @@ public class TransactionControllerTest {
     }
 
     @Test
-    void testGetTransactionsWithColor() throws Exception {
+    void testListTransactions() throws Exception {
         Long userId = 1L;
+        ListTransactionRequest request = new ListTransactionRequest(0, 10);
 
         TransactionResponse transactionResponse =
                 TransactionResponse.builder()
@@ -115,43 +113,19 @@ public class TransactionControllerTest {
 
         List<TransactionResponse> expectedResponse = Arrays.asList(transactionResponse);
 
-        when(transactionService.getTransactionsWithColor(anyLong())).thenReturn(expectedResponse);
+        when(transactionService.listTransactions(anyLong(), any(ListTransactionRequest.class)))
+                .thenReturn(expectedResponse);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         mockMvc.perform(
-                        get("/v1/transaction/list")
+                        post("/v1/transaction/list")
                                 .param("userId", String.valueOf(userId))
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(expectedResponse)));
-    }
-
-    @Test
-    public void testGetPageable() throws Exception {
-        TransactionResponse transactionResponse =
-                TransactionResponse.builder()
-                        .id(1L)
-                        .name("Transaction")
-                        .type(Type.Expense)
-                        .amount(100.0)
-                        .color(Color.RED)
-                        .date(LocalDate.now())
-                        .user(1L)
-                        .build();
-
-        List<TransactionResponse> responseList = Arrays.asList(transactionResponse);
-        Page<TransactionResponse> expectedPage = new PageImpl<>(responseList);
-
-        when(transactionService.getPageable(any(Pageable.class))).thenReturn(expectedPage);
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        mockMvc.perform(get("/v1/transaction/pageable").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(expectedPage)));
     }
 }
