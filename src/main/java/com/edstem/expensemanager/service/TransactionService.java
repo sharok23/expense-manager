@@ -40,7 +40,6 @@ public class TransactionService {
         Transaction transaction =
                 Transaction.builder()
                         .name(request.getName())
-                        //                        .type(request.getType())
                         .amount(request.getAmount())
                         .category(category)
                         .date(request.getDate())
