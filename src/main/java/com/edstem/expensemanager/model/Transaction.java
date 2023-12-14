@@ -23,9 +23,6 @@ public class Transaction {
 
     private String name;
 
-    //    @Enumerated(EnumType.STRING)
-    //    private Type type;
-
     private Double amount;
     private LocalDate date;
 
