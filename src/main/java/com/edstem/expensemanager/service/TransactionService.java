@@ -11,6 +11,7 @@ import com.edstem.expensemanager.model.User;
 import com.edstem.expensemanager.repository.CategoryRepository;
 import com.edstem.expensemanager.repository.TransactionRepository;
 import com.edstem.expensemanager.repository.UserRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +83,7 @@ public class TransactionService {
                 PageRequest.of(
                         request.getPageNumber(),
                         request.getPageSize(),
-                        Sort.by(Sort.Direction.DESC, "date"));
+                        Sort.by(Sort.Direction.ASC, "date"));
 
         User user =
                 userRepository
@@ -105,6 +106,45 @@ public class TransactionService {
                         .collect(Collectors.toList());
 
         Long totalTransactions = transactionRepository.countByUser(user);
+
+        return TransactionListResponse.builder()
+                .transactions(transactions)
+                .totalTransactions(totalTransactions)
+                .build();
+    }
+
+    public TransactionListResponse byDatelistTransactions(
+            Long userId, LocalDate dateFrom, LocalDate dateTo, ListTransactionRequest request) {
+        Pageable page =
+                PageRequest.of(
+                        request.getPageNumber(),
+                        request.getPageSize(),
+                        Sort.by(Sort.Direction.ASC, "date"));
+
+        User user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new EntityNotFoundException("user", userId));
+
+        List<TransactionResponse> transactions =
+                transactionRepository
+                        .findByUserAndDateBetween(user, dateFrom, dateTo, page)
+                        .stream()
+                        .map(
+                                transaction ->
+                                        TransactionResponse.builder()
+                                                .id(transaction.getId())
+                                                .name(transaction.getName())
+                                                .type(transaction.getCategory().getType())
+                                                .amount(transaction.getAmount())
+                                                .color(transaction.getCategory().getColor())
+                                                .date(transaction.getDate())
+                                                .user(transaction.getUser().getId())
+                                                .build())
+                        .collect(Collectors.toList());
+
+        Long totalTransactions =
+                transactionRepository.countByUserAndDateBetween(user, dateFrom, dateTo);
 
         return TransactionListResponse.builder()
                 .transactions(transactions)

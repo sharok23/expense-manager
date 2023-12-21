@@ -159,12 +159,67 @@ public class TransactionServiceTest {
                         PageRequest.of(
                                 request.getPageNumber(),
                                 request.getPageSize(),
-                                Sort.by(Sort.Direction.DESC, "date"))))
+                                Sort.by(Sort.Direction.ASC, "date"))))
                 .thenReturn(new PageImpl<>(transactions));
 
         when(transactionRepository.countByUser(user)).thenReturn(1L);
 
         TransactionListResponse response = transactionService.listTransactions(userId, request);
+        assertEquals(1, response.getTransactions().size());
+        assertEquals(1L, response.getTotalTransactions());
+
+        TransactionResponse transactionResponse = response.getTransactions().get(0);
+        assertEquals(transaction.getId(), transactionResponse.getId());
+        assertEquals(transaction.getName(), transactionResponse.getName());
+        assertEquals(transaction.getCategory().getType(), transactionResponse.getType());
+        assertEquals(transaction.getAmount(), transactionResponse.getAmount());
+        assertEquals(transaction.getCategory().getColor(), transactionResponse.getColor());
+        assertEquals(transaction.getDate(), transactionResponse.getDate());
+        assertEquals(transaction.getUser().getId(), transactionResponse.getUser());
+    }
+
+    @Test
+    void testByDateListTransactions() {
+        Long userId = 1L;
+        LocalDate dateFrom = LocalDate.now().minusDays(5);
+        LocalDate dateTo = LocalDate.now();
+        ListTransactionRequest request = new ListTransactionRequest(0, 10);
+
+        User user = User.builder().id(userId).name("TestUser").build();
+        Category category = new Category(1L, Type.Expense, Color.RED);
+        Transaction transaction =
+                Transaction.builder()
+                        .id(1L)
+                        .name("TestTransaction")
+                        .user(user)
+                        .category(category)
+                        .date(LocalDate.now())
+                        .build();
+
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(transaction);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> transactionService.byDatelistTransactions(userId, dateFrom, dateTo, request));
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(transactionRepository.findByUserAndDateBetween(
+                        user,
+                        dateFrom,
+                        dateTo,
+                        PageRequest.of(
+                                request.getPageNumber(),
+                                request.getPageSize(),
+                                Sort.by(Sort.Direction.ASC, "date"))))
+                .thenReturn(transactions);
+
+        when(transactionRepository.countByUserAndDateBetween(user, dateFrom, dateTo))
+                .thenReturn(1L);
+
+        TransactionListResponse response =
+                transactionService.byDatelistTransactions(userId, dateFrom, dateTo, request);
         assertEquals(1, response.getTransactions().size());
         assertEquals(1L, response.getTotalTransactions());
 

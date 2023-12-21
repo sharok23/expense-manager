@@ -5,6 +5,7 @@ import com.edstem.expensemanager.contract.Request.TransactionRequest;
 import com.edstem.expensemanager.contract.Response.TransactionListResponse;
 import com.edstem.expensemanager.contract.Response.TransactionResponse;
 import com.edstem.expensemanager.service.TransactionService;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,5 +38,14 @@ public class TransactionController {
     public TransactionListResponse listTransactions(
             @RequestParam Long userId, @RequestBody ListTransactionRequest request) {
         return transactionService.listTransactions(userId, request);
+    }
+
+    @PostMapping("/date")
+    public TransactionListResponse listTransactions(
+            @RequestParam Long userId,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            @RequestBody ListTransactionRequest request) {
+        return transactionService.byDatelistTransactions(userId, dateFrom, dateTo, request);
     }
 }

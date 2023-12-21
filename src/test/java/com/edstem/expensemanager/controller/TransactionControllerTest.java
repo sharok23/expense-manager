@@ -131,4 +131,48 @@ public class TransactionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(expectedResponse)));
     }
+
+    @Test
+    void testByDateListTransactions() throws Exception {
+        Long userId = 1L;
+        LocalDate dateFrom = LocalDate.now().minusDays(5);
+        LocalDate dateTo = LocalDate.now();
+        ListTransactionRequest request = new ListTransactionRequest(0, 10);
+
+        TransactionResponse transactionResponse =
+                TransactionResponse.builder()
+                        .id(1L)
+                        .name("Transaction")
+                        .type(Type.Expense)
+                        .amount(100.0)
+                        .color(Color.RED)
+                        .date(LocalDate.now())
+                        .user(userId)
+                        .build();
+
+        List<TransactionResponse> transactionResponses = Arrays.asList(transactionResponse);
+        TransactionListResponse expectedResponse =
+                new TransactionListResponse(transactionResponses, 1L);
+
+        when(transactionService.byDatelistTransactions(
+                        anyLong(),
+                        any(LocalDate.class),
+                        any(LocalDate.class),
+                        any(ListTransactionRequest.class)))
+                .thenReturn(expectedResponse);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        mockMvc.perform(
+                        post("/v1/transaction/date")
+                                .param("userId", String.valueOf(userId))
+                                .param("dateFrom", dateFrom.toString())
+                                .param("dateTo", dateTo.toString())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(expectedResponse)));
+    }
 }
