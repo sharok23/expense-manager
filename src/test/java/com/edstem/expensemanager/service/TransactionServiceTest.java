@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -143,10 +144,13 @@ public class TransactionServiceTest {
                         .name("TestTransaction")
                         .user(user)
                         .category(category)
+                        .date(LocalDate.now())
                         .build();
 
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
+
+        Page<Transaction> transactionPage = new PageImpl<>(transactions);
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
         assertThrows(
@@ -160,13 +164,13 @@ public class TransactionServiceTest {
                                 request.getPageNumber(),
                                 request.getPageSize(),
                                 Sort.by(Sort.Direction.ASC, "date"))))
-                .thenReturn(new PageImpl<>(transactions));
-
-        when(transactionRepository.countByUser(user)).thenReturn(1L);
+                .thenReturn(transactionPage);
 
         TransactionListResponse response = transactionService.listTransactions(userId, request);
         assertEquals(1, response.getTransactions().size());
         assertEquals(1L, response.getTotalTransactions());
+        assertEquals(0, response.getCurrentPage());
+        assertEquals(1, response.getTotalPages());
 
         TransactionResponse transactionResponse = response.getTransactions().get(0);
         assertEquals(transaction.getId(), transactionResponse.getId());
@@ -222,6 +226,8 @@ public class TransactionServiceTest {
                 transactionService.byDatelistTransactions(userId, dateFrom, dateTo, request);
         assertEquals(1, response.getTransactions().size());
         assertEquals(1L, response.getTotalTransactions());
+        assertEquals(0, response.getCurrentPage());
+        assertEquals(1, response.getTotalPages());
 
         TransactionResponse transactionResponse = response.getTransactions().get(0);
         assertEquals(transaction.getId(), transactionResponse.getId());

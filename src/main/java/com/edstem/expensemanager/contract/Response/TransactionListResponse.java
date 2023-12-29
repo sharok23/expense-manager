@@ -13,4 +13,6 @@ import lombok.Setter;
 public class TransactionListResponse {
     private List<TransactionResponse> transactions;
     private Long totalTransactions;
+    private int currentPage;
+    private int totalPages;
 }

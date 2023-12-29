@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  java_app:
+    container_name: expense_app
+    image: expenseimage/java_app:1.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_URL=jdbc:postgresql://java_db:5432/expense
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=edstem@23
+    depends_on:
+      - java_db
+
+  java_db:
+    container_name: java_db
+    image: postgres:12
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: edstem@23
+      POSTGRES_DB: expense
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata: {}

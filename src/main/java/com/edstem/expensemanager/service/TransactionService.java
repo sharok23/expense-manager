@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -89,6 +90,7 @@ public class TransactionService {
                 userRepository
                         .findById(userId)
                         .orElseThrow(() -> new EntityNotFoundException("user", userId));
+        Page<Transaction> transactionPage = transactionRepository.findByUser(user, page);
 
         List<TransactionResponse> transactions =
                 transactionRepository.findByUser(user, page).stream()
@@ -109,7 +111,9 @@ public class TransactionService {
 
         return TransactionListResponse.builder()
                 .transactions(transactions)
-                .totalTransactions(totalTransactions)
+                .totalTransactions(transactionPage.getTotalElements())
+                .currentPage(transactionPage.getNumber())
+                .totalPages(transactionPage.getTotalPages())
                 .build();
     }
 
@@ -125,8 +129,16 @@ public class TransactionService {
                 userRepository
                         .findById(userId)
                         .orElseThrow(() -> new EntityNotFoundException("user", userId));
+        List<Transaction> transactionList =
+                transactionRepository.findByUserAndDateBetween(user, dateFrom, dateTo, page);
 
-        List<TransactionResponse> transactions =
+        int start = (int) page.getOffset();
+        if (start > transactionList.size()) {
+            start = transactionList.size();
+        }
+        int end = Math.min((start + page.getPageSize()), transactionList.size());
+        List<Transaction> transactions = transactionList.subList(start, end);
+        List<TransactionResponse> transactionResponses =
                 transactionRepository
                         .findByUserAndDateBetween(user, dateFrom, dateTo, page)
                         .stream()
@@ -147,8 +159,10 @@ public class TransactionService {
                 transactionRepository.countByUserAndDateBetween(user, dateFrom, dateTo);
 
         return TransactionListResponse.builder()
-                .transactions(transactions)
+                .transactions(transactionResponses)
                 .totalTransactions(totalTransactions)
+                .currentPage(page.getPageNumber())
+                .totalPages((int) Math.ceil((double) totalTransactions / page.getPageSize()))
                 .build();
     }
 }

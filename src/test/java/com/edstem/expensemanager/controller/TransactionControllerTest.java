@@ -114,7 +114,7 @@ public class TransactionControllerTest {
 
         List<TransactionResponse> transactionResponses = Arrays.asList(transactionResponse);
         TransactionListResponse expectedResponse =
-                new TransactionListResponse(transactionResponses, 1L);
+                new TransactionListResponse(transactionResponses, 1L, 0, 1);
 
         when(transactionService.listTransactions(anyLong(), any(ListTransactionRequest.class)))
                 .thenReturn(expectedResponse);
@@ -152,7 +152,7 @@ public class TransactionControllerTest {
 
         List<TransactionResponse> transactionResponses = Arrays.asList(transactionResponse);
         TransactionListResponse expectedResponse =
-                new TransactionListResponse(transactionResponses, 1L);
+                new TransactionListResponse(transactionResponses, 1L, 0, 1);
 
         when(transactionService.byDatelistTransactions(
                         anyLong(),
